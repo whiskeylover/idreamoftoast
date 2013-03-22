@@ -1,1 +1,16 @@
 *.db
+venv
+venv*
+.project
+.pydevproject
+*.pyc
+.DS_Store
+*.pyc
+*.pyo
+env
+env*
+dist
+*.egg
+*.egg-info
+_mailinglist
+.tox
