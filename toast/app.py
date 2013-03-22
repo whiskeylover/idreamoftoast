@@ -43,7 +43,11 @@ def get_flickrpicURL(term):
     #    '_' + j['photos']['photo'][0]['secret'] + \
     #    '_z.jpg'
 
-
+    return "http://farm{0}.staticflickr.com/{1}/{2}_{3}_z.jpg".format( \
+            j['photos']['photo'][0]['farm'], \
+            j['photos']['photo'][0]['server'], \
+            j['photos']['photo'][0]['id'], \
+            j['photos']['photo'][0]['secret'])
 
 
 @app.route("/dreams/top")
