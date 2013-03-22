@@ -5,46 +5,32 @@ import json
 
 app = Flask(__name__)
 
-#@app.route("/")
-#def hello():
-#    return render_template('index.html')
-#
-#@app.route("/dream/<dream>")
-#def dream(dream):
-#    return render_template('dream.html', my_dream=dream)
-#
-#
+FAKE_DATA = [{'name':'toast',
+              'count':100},
+             {'name':'pizza',
+              'count':80},
+             {'name':'bread',
+              'count':60},
+             {'name':'butter',
+              'count':40},
+             {'name':'beer',
+              'count':20}]
 
 @app.route("/dream/define/<term>")
 def get_urbandictionary(term):
     response = urllib2.urlopen('http://api.urbandictionary.com/v0/define?term=' + term)
     html = response.read()
-    
+
     j = json.loads(html)
     return j['list'][0]['definition']
 
 @app.route("/dreams/top")
-def get_json():
-    return jsonify(top_dreams=
-                   [{dream:d1,count:100},
-                    {dream:d2,count:80},
-                    {dream:d3,count:60},
-                    {dream:d4,count:40},
-                    {dream:d5,count:20}
-                   ]
-                  )
+def top_dreams():
+    return jsonify(data=FAKE_DATA)
 
 @app.route("/dreams/recent")
-def get_json():
-    return jsonify(recent_dreams=
-                   [{dream:d1,count:100},
-                    {dream:d2,count:80},
-                    {dream:d3,count:60},
-                    {dream:d4,count:40},
-                    {dream:d5,count:20}
-                   ]
-                  )
-
+def recent_dreams():
+    return jsonify(data=FAKE_DATA)
 
 if __name__ == "__main__":
     # Development only! Reloads server on file change.
