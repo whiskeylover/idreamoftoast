@@ -9,10 +9,10 @@ var Dream = Backbone.Model.extend
 	{ 
 		defaults: { count: 1 },
 		
-		initialize: function()
-		{
-			//alert(this.get('name'))
-		}
+		//initialize: function()
+		//{
+		//	alert("Creating dream " + this.get('name'))
+		//}
 	}
 );
 
@@ -21,22 +21,27 @@ var Dream = Backbone.Model.extend
 var DreamList = Backbone.Collection.extend
 (
 	{ 
-		model: Dream,
-		initialize: function()
-		{
-			//this.url = "http://127.0.0.1:5000/dreams/top";
-			//this.fetch
-			//(
-			//	{
-        	//		success: function () 
-        	//		{
-        	//			//alert(user.toJSON());
-        	//			alert("yay");
-        	 //       }
-        	//   }
-        	//);
+		model: Dream//,
+		//url: "http://127.0.0.1:5000/dreams/top",
+		//initialize: function()
+		//{
+			//alert("Collection url is " + this.url);
+			/*this.fetch
+			(
+				{
+					type: "GET",
+        			success: function () 
+        			{
+						alert("yes");
+           	       	},
+        	       	error: function()
+        	       	{
+        	       		alert("Oh Noes");
+        	       	}
+        	   	}
+        	);*/
 			
-		}
+		//}
 	}
 );
 
@@ -45,8 +50,8 @@ var DreamList = Backbone.Collection.extend
 // Views
 ////////
 
-// Dream
-var DreamView = Backbone.View.extend
+// Dream mini view
+var DreamMiniView = Backbone.View.extend
 (
 	{
 		tagName: "div",
@@ -67,6 +72,34 @@ var DreamView = Backbone.View.extend
 );
 
 
+var DreamView = Backbone.View.extend
+(
+	{
+		el: "#thedream",
+		template: $("#theDreamTemplate").html(),
+		model: Dream,
+		
+		initialize: function(options)
+		{
+			var url = 'http://127.0.0.1:5000/dreams/get/' + options['name'];
+			this.model = new Dream([], {url: url});
+			this.listenTo( this.model, 'sync', this.render ); // Trigger render when model has been loaded
+
+			this.model.fetch
+			();
+		},
+		
+		render: function()
+		{
+			//alert('here');
+			var tmpl = _.template(this.template);
+			//alert(this.model.toJSON());
+			$(this.el).html(tmpl(this.model.toJSON()));
+		}
+	}
+);
+
+
 // DreamList
 var DreamListView = Backbone.View.extend
 (
@@ -75,27 +108,32 @@ var DreamListView = Backbone.View.extend
 		
 		initialize: function(options)
 		{
-			var dreams = options["dreams"];
-			this.collection = new DreamList(dreams);
+			var url = options["url"];
+			this.collection = new DreamList([], {url: url});
+			this.collection.fetch({type: "GET", reset: true});
 			_.bindAll(this, 'render'); // fixes loss of context for 'this' within methods
-			this.render(); // not all views are self-rendering. This one is.
+			//this.render(); // not all views are self-rendering. This one is.
+			
+			this.listenToOnce( this.collection, 'reset', this.render ); // Trigger render when list has been loaded
 		},
 		
 		render: function()
 		{
-			//$(this.el).append("<ul> <li>hello world</li> </ul>");
 			var that = this;
 			var i = 0;
+			var div_row_fluid;
 			_.each(
 				this.collection.models, 
 				function (item) 
 				{
-					//if(i % 4 == 0)
-					//{
-					//	$(this.el).append("<div class=\"row-fluid\">");
-					//}
+					if(i % 4 == 0)
+					{
+						div_row_fluid = $('<div class=\"row-fluid\"></div>');
+						$(this.el).append(div_row_fluid);
+						//$(this.el).append("<div class=\"row-fluid\">");
+					}
 					//$(that.el).append(item.render().el);
-					that.renderDream(item);
+					that.renderDream(div_row_fluid, item);
 					//if(i % 4 == 0)
 					//{
 					//	$(this.el).append("</div>");
@@ -108,23 +146,47 @@ var DreamListView = Backbone.View.extend
 			);
 		},
 		
-		renderDream: function(item) 
+		renderDream: function(div_row_fluid, item) 
 		{
-			var dreamView = new DreamView
+			var dreamMiniView = new DreamMiniView
 			(
-				{ model: item }
+				{ 
+					model: item 
+				}
 			);
-			//$(this.el).append("<ul> <li>hello world</li> </ul>");
-			$(this.el).append(dreamView.render().el);
-			//$(this.el).append(item.get('name'));
+			//$(this.el).append(dreamMiniView.render().el);
+			div_row_fluid.append(dreamMiniView.render().el);
 		}
 	}
 );
 
 
+/////////////////
+// Routers
+////////////////
+
+var DreamRouter = Backbone.Router.extend({
+    /* define the route and function maps for this router */
+    routes: 
+    {
+        "show" : "getDream",
+    },
+       
+    getDream: function()
+    {
+
+        alert("You are trying to reach a dream");
+    }
+});
+
+
+
+
 (function($)
 {
-	var dreams = 
+	Backbone.emulateHTTP = true;
+	
+	var sampleDreams = 
 			[
 				{ name: "Example 1", count: "100" },
 				{ name: "Example 2", count: "75" },
@@ -135,8 +197,13 @@ var DreamListView = Backbone.View.extend
 				{ name: "Example 7", count: "35" },
 				{ name: "Example 8", count: "25" }
 			];
-			
-	var dreamListView = new DreamListView({dreams: dreams, el: "#populardreams", url: "http://127.0.0.1:5000/dreams/top"});      
+	
+	
+	var topDreamListView = new DreamListView({el: "#populardreams", url: "http://127.0.0.1:5000/dreams/top"});      
+	var recentDreamListView = new DreamListView({el: "#recentdreams", url: "http://127.0.0.1:5000/dreams/recent"});   
+	var theDreamView = new DreamView({name: "eating bacon"});   
+	var myDreamRouter = new DreamRouter();
+	Backbone.history.start();
 })(jQuery);
 
 

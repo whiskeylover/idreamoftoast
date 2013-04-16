@@ -1,17 +1,31 @@
-(function($){
-  var ListView = Backbone.View.extend({    
-    el: $('body'), // attaches `this.el` to an existing element.
+var Todo = Backbone.Model.extend({
+  // Default todo attribute values
+  defaults: {
+    title: '',
+    completed: false
+  }
+});
 
-    initialize: function(){
-      _.bindAll(this, 'render'); // fixes loss of context for 'this' within methods
-       
-       this.render(); // not all views are self-rendering. This one is.
-    },
+// Now we can create our concrete instance of the model
+// with default values as follows:
+var todo1 = new Todo();
 
-    render: function(){
-      $(this.el).append("<ul> <li>hello world</li> </ul>");
-    }
-  });
+// Following logs: {"title":"","completed":false}
+console.log(JSON.stringify(todo1));
 
-  var listView = new ListView();      
-})(jQuery);
+// Or we could instantiate it with some of the attributes (e.g., with custom title):
+var todo2 = new Todo({
+  title: 'Check attributes of the logged models in the console.'
+});
+
+// Following logs: {"title":"Check attributes of the logged models in the console.","completed":false}
+console.log(JSON.stringify(todo2));
+
+// Or override all of the default attributes:
+var todo3 = new Todo({
+  title: 'This todo is done, so take no action on this one.',
+  completed: true
+});
+
+// Following logs: {"title":"This todo is done, so take no action on this one.","completed":true} 
+console.log(JSON.stringify(todo3));
