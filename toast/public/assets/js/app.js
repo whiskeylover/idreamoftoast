@@ -122,6 +122,7 @@ var DreamListView = Backbone.View.extend
 			var that = this;
 			var i = 0;
 			var div_row_fluid;
+			//alert(this.collection.toJSON());
 			_.each(
 				this.collection.models, 
 				function (item) 
@@ -161,49 +162,7 @@ var DreamListView = Backbone.View.extend
 );
 
 
-/////////////////
-// Routers
-////////////////
-
-var DreamRouter = Backbone.Router.extend({
-    /* define the route and function maps for this router */
-    routes: 
-    {
-        "show" : "getDream",
-    },
-       
-    getDream: function()
-    {
-
-        alert("You are trying to reach a dream");
-    }
-});
 
 
-
-
-(function($)
-{
-	Backbone.emulateHTTP = true;
-	
-	var sampleDreams = 
-			[
-				{ name: "Example 1", count: "100" },
-				{ name: "Example 2", count: "75" },
-				{ name: "Example 3", count: "65" },
-				{ name: "Example 4", count: "55" },
-				{ name: "Example 5", count: "45" },
-				{ name: "Example 6", count: "40" },
-				{ name: "Example 7", count: "35" },
-				{ name: "Example 8", count: "25" }
-			];
-	
-	
-	var topDreamListView = new DreamListView({el: "#populardreams", url: "http://127.0.0.1:5000/dreams/top"});      
-	var recentDreamListView = new DreamListView({el: "#recentdreams", url: "http://127.0.0.1:5000/dreams/recent"});   
-	var theDreamView = new DreamView({name: "eating bacon"});   
-	var myDreamRouter = new DreamRouter();
-	Backbone.history.start();
-})(jQuery);
 
 

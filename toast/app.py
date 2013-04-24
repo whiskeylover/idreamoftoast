@@ -52,7 +52,7 @@ def get_dreams(order, limit):
 
 def get_dream(dream):
     """ Helper method for getting a single dream. """
-    d = Dream.select().where(Dream.name == dream).first()
+    d = Dream.select().where(Dream.name == dream.lower()).first()
     
     if d is None:
         d = Dream.create(name=dream.lower(), count=0, picURL=get_flickrpicURL(dream), picURLthn=get_flickrpicURL(dream), definition=get_urbandictionary(dream))
@@ -161,21 +161,22 @@ def add_dream(dream):
 @app.route("/dreams/top")
 def top_dreams():
     a = get_dreams(Dream.count.desc(), MAX_TOP_DREAMS)
-    return Response(json.dumps(a),  mimetype='application/json')
+    #Response.headers.add('Access-Control-Allow-Origin', '*')
+    return Response(json.dumps(a),  mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
 
     #return jsonify(data=get_dreams(Dream.count.desc(), MAX_TOP_DREAMS))
 
 @app.route("/dreams/recent")
 def recent_dreams():
     a = get_dreams(Dream.modified_on.desc(), MAX_TOP_DREAMS)
-    return Response(json.dumps(a),  mimetype='application/json')
+    return Response(json.dumps(a),  mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
 
     #return jsonify(data=get_dreams(Dream.modified_on.desc(), MAX_TOP_DREAMS))
 
 @app.route("/dreams/get/<dream>")
 def get_single_dream(dream):
-    a = get_dream(dream)
-    return Response(json.dumps(a), mimetype='application/json')
+    a = get_dream(dream.lower())
+    return Response(json.dumps(a), mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
 
 #-------------------------------------------------------------------------------
 # Main

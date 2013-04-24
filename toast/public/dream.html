@@ -34,7 +34,7 @@
                                    <link rel="shortcut icon" href="../assets/ico/favicon.png">
                                    
 	<script id="dreamTemplate" type="text/template">
-		<h2><span class="text-info"><%= name %></span></h2>
+		<h2><span class="text-info"><a href="#show/<%= name %>"><%= name %></a></span></h2>
 	  	<p>
 	    	<img data-src="holder.js/140x140" class="img-polaroid" alt="140x140" style="width: 150px; height: 150px;" src="<%= picURLthn %>">
 		</p>
@@ -49,6 +49,7 @@
 	  			<p>
 	    			<img data-src="holder.js/600x400" class="img-polaroid" alt="600x400" style="height: 400px;" src="<%= picURL %>">
 				</p>
+				<p><em><small>- image courtesy of <a href="http://www.flickr.com">Flickr</a></small></em></p>
 	  			<p><%= count %> other people dreamt about this.</p>
 				<div class="btn-group">
 				  <a class="btn btn-info" href="#"><i class="icon-share icon-white"></i> Share</a>
@@ -200,20 +201,15 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <!--
-    <script src="assets/js/jquery-1.4.2.min.js"></script>
-    <script src="assets/js/bootstrap.js"></script>
-    <script src="assets/js/bootstrapSwitch.js"></script>
-    <script src="assets/js/underscore.min.js"></script>
-    <script src="assets/js/backbone-min.js"></script>
-    <script src="assets/js/app.js"></script>
-    -->
-    
-    <script src="assets/js/jquery-1.4.2.min.js"></script>
+
+    <!--<script src="assets/js/jquery-1.4.2.min.js"></script>-->
+    <script src="http://code.jquery.com/jquery.js"></script>
     <script src="assets/js/bootstrap.js"></script>
     <script src="assets/js/json2.js"></script>
-    <script src="assets/js/underscore.min.js"></script>
-    <script src="assets/js/backbone-min.js"></script>
+    <!--<script src="assets/js/underscore.min.js"></script>-->
+    <script src="http://underscorejs.org/underscore.js"></script>
+    <!--<script src="assets/js/backbone-min.js"></script>-->
+    <script src="http://backbonejs.org/backbone.js"></script>
     <script src="assets/js/app.js"></script>
         
     <!--
@@ -230,6 +226,58 @@
     <script src="assets/js/bootstrap-carousel.js"></script>
     <script src="assets/js/bootstrap-typeahead.js"></script>
 	-->
+	
+	
+	<script>
+	
+	/////////////////
+	// Routers
+	////////////////
+	
+	var DreamRouter = Backbone.Router.extend({
+	    /* define the route and function maps for this router */
+	    routes: 
+	    {
+	        "show/:dream" : "getDream",
+	        "*other"    : "defaultRoute"
+	    },
+	       
+	    getDream: function(dream)
+	    {
+	        var theDreamView = new DreamView({name: dream}); 
+	    },
+	    
+	    defaultRoute: function(other)
+	    {
+	    	//alert("Whaa...?");
+	    }
+	});
+
+		// create views and stuff
+		(function($)
+		{
+			Backbone.emulateHTTP = true;
+			
+			var sampleDreams = 
+					[
+						{ name: "Example 1", count: "100" },
+						{ name: "Example 2", count: "75" },
+						{ name: "Example 3", count: "65" },
+						{ name: "Example 4", count: "55" },
+						{ name: "Example 5", count: "45" },
+						{ name: "Example 6", count: "40" },
+						{ name: "Example 7", count: "35" },
+						{ name: "Example 8", count: "25" }
+					];
+			
+			
+			var topDreamListView = new DreamListView({el: "#populardreams", url: "http://127.0.0.1:5000/dreams/top"});      
+			var recentDreamListView = new DreamListView({el: "#recentdreams", url: "http://127.0.0.1:5000/dreams/recent"});   
+			//var theDreamView = new DreamView({name: "eating bacon"});   
+			var myDreamRouter = new DreamRouter();
+			Backbone.history.start();
+		})(jQuery);
+	</script>
 	
   </body>
 </html>

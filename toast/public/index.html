@@ -32,7 +32,7 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
                     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
+                                   <link rel="shortcut icon" href="../assets/ico/favicon.ico">
   </head>
 
   <body>
@@ -70,7 +70,7 @@
 
        			<div class="input-append">
   					<input class="span6" id="dream" name="dream" type="text" placeholder="Falafel">
-  					<button class="btn btn-primary" type="submit">Go!</button>
+  					<button class="btn btn-primary" id="btn-submit" type="submit">Go!</button>
 				</div>
     		</form>
     	</div>
@@ -88,9 +88,35 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    
+    <script src="assets/js/jquery-1.4.2.min.js"></script>
     <script src="assets/js/bootstrap.js"></script>
-    <script src="assets/js/bootstrapSwitch.js"></script>
+    <script src="assets/js/json2.js"></script>
+    <script src="assets/js/underscore.min.js"></script>
+    <script src="assets/js/backbone-min.js"></script>
+    <script src="assets/js/app.js"></script>
+
+
+	<script>
+	$(document).ready(function()
+	{
+	  $("#btn-submit").click(function(evt)
+	  {
+	  	var dream = $("#dream").val();
+	  	//alert("Fetching http://127.0.0.1:5000/dreams/add/" + $("#dream").val());
+	    $.getJSON("http://127.0.0.1:5000/dreams/add/" + dream,function(result)
+	    {
+	      /*$.each(result, function(i, field)
+	      {
+	        $("div").append(field + " ");
+	      });*/
+	      // redirect to dreams.html#show/<dream>
+	      window.location = "dream.html#show/" + dream;
+	    });
+	    evt.preventDefault();
+	  });
+	});
+	</script>    
     <!--
     <script src="../assets/js/bootstrap-transition.js"></script>
     <script src="../assets/js/bootstrap-alert.js"></script>
