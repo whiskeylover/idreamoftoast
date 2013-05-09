@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 import urllib2
 
 from flask import Flask, jsonify, Response
@@ -12,11 +13,24 @@ from peewee import CharField, DateTimeField, IntegerField
 #-------------------------------------------------------------------------------
 MAX_TOP_DREAMS = 8
 EXTERNAL_RESOURCE_REFRESH_FREQ = 30
+
 #-------------------------------------------------------------------------------
-# Globals
+# Environment
 #-------------------------------------------------------------------------------
-db = SqliteDatabase('toast.db', threadlocals=True)
-app = Flask(__name__)
+env = os.environ.get('TOAST_PRODUCTION', None)
+
+# If env is set, we are in production!
+if env:
+    # Production settings here!
+    pass
+else:
+    # Development settings here!
+    db = SqliteDatabase('toast.db', threadlocals=True)
+    app = Flask(__name__, static_folder='public', static_url_path='')
+
+    @app.route("/")
+    def root():
+        return app.send_static_file('index.html')
 
 #-------------------------------------------------------------------------------
 # Models
@@ -25,11 +39,11 @@ class Dream(Model):
     """" Dream model. """
     name = CharField()
     count = IntegerField(default=0)
-    
+
     picURL = CharField(null=True)
     picURLthn = CharField(null=True)
     definition = CharField(null=True)
-    
+
     created_on = DateTimeField(default=datetime.datetime.now)
     modified_on = DateTimeField(default=datetime.datetime.now)
 
@@ -53,10 +67,10 @@ def get_dreams(order, limit):
 def get_dream(dream):
     """ Helper method for getting a single dream. """
     d = Dream.select().where(Dream.name == dream.lower()).first()
-    
+
     if d is None:
         d = Dream.create(name=dream.lower(), count=0, picURL=get_flickrpicURL(dream), picURLthn=get_flickrpicURL(dream), definition=get_urbandictionary(dream))
-        
+
     return {'name':d.name, 'count':d.count, 'definition': d.definition, 'picURL': d.picURL, 'picURLthn': d.picURLthn}
 
 #-------------------------------------------------------------------------------
@@ -69,9 +83,9 @@ def get_urbandictionary(term):
         html = response.read()
 
         j = json.loads(html)
-        
+
         print "Refreshed " + term + "'s definition"
-        
+
         return j['list'][0]['definition']
     except:
         return ""
@@ -88,9 +102,9 @@ def get_flickrpicURL(term):
         response = urllib2.urlopen(URL)
         html = response.read()
         j = json.loads(html)
- 
+
         print "Refreshed " + term + "'s picURL"
-        
+
         return "http://farm{0}.staticflickr.com/{1}/{2}_{3}_z.jpg".format( \
             j['photos']['photo'][0]['farm'], \
             j['photos']['photo'][0]['server'], \
@@ -112,9 +126,9 @@ def get_flickrpicURLthn(term):
         response = urllib2.urlopen(URL)
         html = response.read()
         j = json.loads(html)
- 
+
         print "Refreshed " + term + "'s picURLthn"
-        
+
         return "http://farm{0}.staticflickr.com/{1}/{2}_{3}_q.jpg".format( \
             j['photos']['photo'][0]['farm'], \
             j['photos']['photo'][0]['server'], \
@@ -124,12 +138,12 @@ def get_flickrpicURLthn(term):
     except:
         return "assets/img/888888thn.png"
 
-   
+
 @app.route("/dreams/add/<dream>")
 def add_dream(dream):
     d = Dream.get_or_create(name=dream.lower())
     d.count += 1
-    
+
     # if the record has just been created, fetch the picURL and definition
     if d.count == 1:
         print "Creating new dream"
@@ -140,7 +154,7 @@ def add_dream(dream):
         d.definition = get_urbandictionary(d.name)
     else:
         print "Fetching existing dream"
-        
+
     # if the definition and URL are more than EXTERNAL_RESOURCE_REFRESH_FREQ days old
     days_old = 0
     try:
@@ -153,7 +167,7 @@ def add_dream(dream):
         d.picURLthn = get_flickrpicURLthn(d.name)
         d.definition = get_urbandictionary(d.name)
         d.modified_on = datetime.datetime.now()
-        
+
     d.save()
     return jsonify(data={'id': d.id,
                          'count': d.count})

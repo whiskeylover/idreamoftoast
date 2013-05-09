@@ -19,13 +19,14 @@ Install toast:
 $ source ~/venv/bin/active
 $ git clone git@github.com:whiskeylover/idreamoftoast.git
 $ cd idreamoftoast/
+$ source ~/venv/bin/active
 $ pip install -r requirements.txt
 ```
 
 Start the server:
 
 ```bash
-$ source ~/venv/bin/active
+$ source ~/venv/bin/active (if you're not already in the virtual environent)
 $ python toast/app.py
 ```
 
