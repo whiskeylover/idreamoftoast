@@ -14,3 +14,4 @@ dist
 *.egg-info
 _mailinglist
 .tox
+.htaccess
