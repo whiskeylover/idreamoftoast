@@ -1,5 +1,6 @@
 import datetime
 import json
+import os
 import urllib2
 
 from flask import Flask, jsonify, Response
@@ -14,17 +15,22 @@ MAX_TOP_DREAMS = 8
 EXTERNAL_RESOURCE_REFRESH_FREQ = 30
 
 #-------------------------------------------------------------------------------
-# Globals
+# Environment
 #-------------------------------------------------------------------------------
-db = SqliteDatabase('toast.db', threadlocals=True)
-app = Flask(__name__, static_folder='public', static_url_path='')
+env = os.environ.get('TOAST_PRODUCTION', None)
 
-#-------------------------------------------------------------------------------
-# Environment Settings
-#-------------------------------------------------------------------------------
-@app.route("/")
-def root():
-    return app.send_static_file('index.html')
+# If env is set, we are in production!
+if env:
+    # Production settings here!
+    pass
+else:
+    # Development settings here!
+    db = SqliteDatabase('toast.db', threadlocals=True)
+    app = Flask(__name__, static_folder='public', static_url_path='')
+
+    @app.route("/")
+    def root():
+        return app.send_static_file('index.html')
 
 #-------------------------------------------------------------------------------
 # Models
