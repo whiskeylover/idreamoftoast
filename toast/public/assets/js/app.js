@@ -6,9 +6,9 @@
 // Dream
 var Dream = Backbone.Model.extend
 (
-	{ 
+	{
 		defaults: { count: 1 },
-		
+
 		//initialize: function()
 		//{
 		//	alert("Creating dream " + this.get('name'))
@@ -20,9 +20,9 @@ var Dream = Backbone.Model.extend
 // DreamList
 var DreamList = Backbone.Collection.extend
 (
-	{ 
+	{
 		model: Dream//,
-		//url: "http://127.0.0.1:5000/dreams/top",
+		//url: "/dreams/top",
 		//initialize: function()
 		//{
 			//alert("Collection url is " + this.url);
@@ -30,7 +30,7 @@ var DreamList = Backbone.Collection.extend
 			(
 				{
 					type: "GET",
-        			success: function () 
+        			success: function ()
         			{
 						alert("yes");
            	       	},
@@ -40,7 +40,7 @@ var DreamList = Backbone.Collection.extend
         	       	}
         	   	}
         	);*/
-			
+
 		//}
 	}
 );
@@ -56,10 +56,10 @@ var DreamMiniView = Backbone.View.extend
 	{
 		tagName: "div",
 		className: "span3 center",
-		
+
 		template: $("#dreamTemplate").html(),
-		
-		render: function () 
+
+		render: function ()
 		{
 			var variables = {name: this.model.get('name'), count: this.model.get('count')};
 			var tmpl = _.template(this.template);
@@ -78,17 +78,17 @@ var DreamView = Backbone.View.extend
 		el: "#thedream",
 		template: $("#theDreamTemplate").html(),
 		model: Dream,
-		
+
 		initialize: function(options)
 		{
-			var url = 'http://127.0.0.1:5000/dreams/get/' + options['name'];
+			var url = '/dreams/get/' + options['name'];
 			this.model = new Dream([], {url: url});
 			this.listenTo( this.model, 'sync', this.render ); // Trigger render when model has been loaded
 
 			this.model.fetch
 			();
 		},
-		
+
 		render: function()
 		{
 			//alert('here');
@@ -103,9 +103,9 @@ var DreamView = Backbone.View.extend
 // DreamList
 var DreamListView = Backbone.View.extend
 (
-	{ 
+	{
 		//el: $('#populardreams'), // attaches `this.el` to an existing element.
-		
+
 		initialize: function(options)
 		{
 			var url = options["url"];
@@ -113,10 +113,10 @@ var DreamListView = Backbone.View.extend
 			this.collection.fetch({type: "GET", reset: true});
 			_.bindAll(this, 'render'); // fixes loss of context for 'this' within methods
 			//this.render(); // not all views are self-rendering. This one is.
-			
+
 			this.listenToOnce( this.collection, 'reset', this.render ); // Trigger render when list has been loaded
 		},
-		
+
 		render: function()
 		{
 			var that = this;
@@ -124,8 +124,8 @@ var DreamListView = Backbone.View.extend
 			var div_row_fluid;
 			//alert(this.collection.toJSON());
 			_.each(
-				this.collection.models, 
-				function (item) 
+				this.collection.models,
+				function (item)
 				{
 					if(i % 4 == 0)
 					{
@@ -141,18 +141,18 @@ var DreamListView = Backbone.View.extend
 					//}
 					//$(that.el).append(item.render().el);
 					i++;
-					
-				}, 
+
+				},
 				this
 			);
 		},
-		
-		renderDream: function(div_row_fluid, item) 
+
+		renderDream: function(div_row_fluid, item)
 		{
 			var dreamMiniView = new DreamMiniView
 			(
-				{ 
-					model: item 
+				{
+					model: item
 				}
 			);
 			//$(this.el).append(dreamMiniView.render().el);

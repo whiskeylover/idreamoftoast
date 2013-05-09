@@ -32,7 +32,7 @@
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
                     <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
                                    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
-                                   
+
 	<script id="dreamTemplate" type="text/template">
 		<h2><span class="text-info"><a href="#show/<%= name %>"><%= name %></a></span></h2>
 	  	<p>
@@ -40,7 +40,7 @@
 		</p>
 	  	<p><%= count %> other people dreamt about this.</p>
 	</script>
-	
+
 	<script id="theDreamTemplate" type="text/template">
 				<h2>You dream of <span class="text-info"><%= name %></span>.</h2>
 	            <p><em>"<%= definition %>"</em></p>
@@ -58,9 +58,9 @@
 				    <li><a href="#">Facebook</a></li>
 				    <li><a href="#">Twitter</a></li>
 				  </ul>
-				</div>		
+				</div>
 	</script>
-	
+
   </head>
 
   <body>
@@ -96,7 +96,7 @@
     	<div class="row-fluid">
     		<div class="span3">&nbsp;</div>
     		<div class="span6 center" id="thedream">
-	  			
+
   			</div>
   			<div class="span3">&nbsp;</div>
 		</div>
@@ -104,14 +104,14 @@
 		<div class="row-fluid">
 			<div class="span12 center"><h1>Most popular dreams</h1></div>
 		</div>
-		
+
 		<div class="container">
 			<div class="row-fluid" id="populardreams"></div>
 		</div>
-<!--	
+<!--
 		<div class="container" id="popdreams">
 			<div class="row-fluid">
-				
+
 				<div class="span3 center">
 	  				<h2><span class="text-info">Falafel</span></h2>
 		  			<p>
@@ -172,8 +172,8 @@
   			</div>
 		</div>
 		</div>
- -->   
-    	
+ -->
+
     	<hr />
 
 
@@ -181,13 +181,13 @@
 		<div class="row-fluid">
 			<div class="span12 center"><h1>Recent dreams</h1></div>
 		</div>
-		
+
 		<div class="container">
 			<div class="row-fluid" id="recentdreams"></div>
 		</div>
 
 		<hr />
-		
+
     	<div class="navbar navbar-fixed-bottom">
     		<div class="navbar-inner">
     			<div class="container">
@@ -208,7 +208,7 @@
     <script src="assets/js/underscore.js"></script>
     <script src="assets/js/backbone.js"></script>
     <script src="assets/js/app.js"></script>
-        
+
     <!--
     <script src="assets/js/bootstrap-transition.js"></script>
     <script src="assets/js/bootstrap-alert.js"></script>
@@ -223,27 +223,27 @@
     <script src="assets/js/bootstrap-carousel.js"></script>
     <script src="assets/js/bootstrap-typeahead.js"></script>
 	-->
-	
-	
+
+
 	<script>
-	
+
 	/////////////////
 	// Routers
 	////////////////
-	
+
 	var DreamRouter = Backbone.Router.extend({
 	    /* define the route and function maps for this router */
-	    routes: 
+	    routes:
 	    {
 	        "show/:dream" : "getDream",
 	        "*other"    : "defaultRoute"
 	    },
-	       
+
 	    getDream: function(dream)
 	    {
-	        var theDreamView = new DreamView({name: dream}); 
+	        var theDreamView = new DreamView({name: dream});
 	    },
-	    
+
 	    defaultRoute: function(other)
 	    {
 	    	//alert("Whaa...?");
@@ -254,8 +254,8 @@
 		(function($)
 		{
 			Backbone.emulateHTTP = true;
-			
-			var sampleDreams = 
+
+			var sampleDreams =
 					[
 						{ name: "Example 1", count: "100" },
 						{ name: "Example 2", count: "75" },
@@ -266,15 +266,15 @@
 						{ name: "Example 7", count: "35" },
 						{ name: "Example 8", count: "25" }
 					];
-			
-			
-			var topDreamListView = new DreamListView({el: "#populardreams", url: "http://127.0.0.1:5000/dreams/top"});      
-			var recentDreamListView = new DreamListView({el: "#recentdreams", url: "http://127.0.0.1:5000/dreams/recent"});   
-			//var theDreamView = new DreamView({name: "eating bacon"});   
+
+
+			var topDreamListView = new DreamListView({el: "#populardreams", url: "/dreams/top"});
+			var recentDreamListView = new DreamListView({el: "#recentdreams", url: "/dreams/recent"});
+			//var theDreamView = new DreamView({name: "eating bacon"});
 			var myDreamRouter = new DreamRouter();
 			Backbone.history.start();
 		})(jQuery);
 	</script>
-	
+
   </body>
 </html>
