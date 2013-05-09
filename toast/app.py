@@ -5,7 +5,7 @@ import urllib2
 
 from flask import Flask, jsonify, Response
 from flask import render_template
-from peewee import Model, SqliteDatabase
+from peewee import Model, MySQLDatabase, SqliteDatabase
 from peewee import CharField, DateTimeField, IntegerField
 
 #-------------------------------------------------------------------------------
@@ -22,7 +22,15 @@ env = os.environ.get('TOAST_PRODUCTION', None)
 # If env is set, we are in production!
 if env:
     # Production settings here!
-    pass
+    host = os.environ.get('TOAST_HOST', None)
+    user = os.environ.get('TOAST_USER', None)
+    passwd = os.environ.get('TOAST_PASSWD', None)
+    if not (host or user or passwd):
+        import sys
+        print 'Environment variables NOT set!'
+        sys.exit()
+    db = MySQLDatabase('idreamoftoast', host=host, user=user, passwd=passwd)
+    app = Flask(__name__)
 else:
     # Development settings here!
     db = SqliteDatabase('toast.db', threadlocals=True)
