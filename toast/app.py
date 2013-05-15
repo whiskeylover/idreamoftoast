@@ -7,6 +7,7 @@ from flask import Flask, jsonify, Response
 from flask import render_template
 from peewee import Model, MySQLDatabase, SqliteDatabase
 from peewee import CharField, DateTimeField, IntegerField
+from urllib import unquote
 
 #-------------------------------------------------------------------------------
 # Constants
@@ -149,7 +150,8 @@ def get_flickrpicURLthn(term):
 
 @app.route("/dreams/add/<dream>")
 def add_dream(dream):
-    d = Dream.get_or_create(name=dream.lower())
+    
+    d = Dream.get_or_create(name=unquote(dream.lower()))
     d.count += 1
 
     # if the record has just been created, fetch the picURL and definition
