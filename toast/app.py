@@ -199,7 +199,7 @@ def recent_dreams():
 
 @app.route("/dreams/get/<dream>")
 def get_single_dream(dream):
-    a = get_dream(dream.lower())
+    a = get_dream(unquote(dream.lower()))
     return Response(json.dumps(a), mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
 
 #-------------------------------------------------------------------------------
