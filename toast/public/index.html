@@ -45,10 +45,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="#">i dream of toast</a>
+          <a class="brand" href="/">i dream of toast</a>
           <div class="nav-collapse collapse">
             <ul class="nav pull-right">
               <li class="active"><a href="/">Home</a></li>
+              <li><a href="/dream.html">Dreams</a></li>
               <li><a href="#about">About</a></li>
 
             </ul>
@@ -73,6 +74,9 @@
   					<button class="btn btn-primary" id="btn-submit" type="submit">Go!</button>
 				</div>
     		</form>
+    	</div>
+    	<div class="span12 text-center" id="spinner">
+    		<img src="assets/img/18-0.gif" />
     	</div>
 
     	<div class="navbar navbar-fixed-bottom">
@@ -102,6 +106,7 @@
 	{
 	  $("#btn-submit").click(function(evt)
 	  {
+	  	$("#spinner").show();
 	  	var dream = $("#dream").val();
 	  	//alert("Fetching /dreams/add/" + $("#dream").val());
 	    $.getJSON("/dreams/add/" + dream,function(result)
@@ -115,6 +120,8 @@
 	    });
 	    evt.preventDefault();
 	  });
+	  
+	  $('#spinner').hide();  // hide it initially
 	});
 	</script>
     <!--
