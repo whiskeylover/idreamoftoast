@@ -32,6 +32,16 @@ if env:
         sys.exit()
     db = MySQLDatabase('idreamoftoast', host=host, user=user, passwd=passwd)
     app = Flask(__name__)
+
+    import logging
+    path = os.environ.get('TOAST_LOG_PATH', './')
+    file_handler = logging.FileHandler(path + 'flask.log')
+    file_handler.setLevel(logging.WARNING)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s '
+        '[in %(pathname)s:%(lineno)d]'
+    ))
+    app.logger.addHandler(file_handler)
 else:
     # Development settings here!
     db = SqliteDatabase('toast.db', threadlocals=True)
