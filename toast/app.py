@@ -1,13 +1,12 @@
 import datetime
 import json
-import os
+from urllib import unquote
 import urllib2
 
-from flask import Flask, jsonify, Response
-from flask import render_template
-from peewee import Model, MySQLDatabase, SqliteDatabase
-from peewee import CharField, DateTimeField, IntegerField
-from urllib import unquote
+from flask import jsonify, Response
+from peewee import CharField, DateTimeField, IntegerField, Model
+
+import config
 
 #-------------------------------------------------------------------------------
 # Constants
@@ -16,40 +15,10 @@ MAX_TOP_DREAMS = 8
 EXTERNAL_RESOURCE_REFRESH_FREQ = 30
 
 #-------------------------------------------------------------------------------
-# Environment
+# Config
 #-------------------------------------------------------------------------------
-env = os.environ.get('TOAST_PRODUCTION', None)
-
-# If env is set, we are in production!
-if env:
-    # Production settings here!
-    host = os.environ.get('TOAST_HOST', None)
-    user = os.environ.get('TOAST_USER', None)
-    passwd = os.environ.get('TOAST_PASSWD', None)
-    if not (host or user or passwd):
-        import sys
-        print 'Environment variables NOT set!'
-        sys.exit()
-    db = MySQLDatabase('idreamoftoast', host=host, user=user, passwd=passwd)
-    app = Flask(__name__)
-
-    import logging
-    path = os.environ.get('TOAST_LOG_PATH', './')
-    file_handler = logging.FileHandler(path + 'flask.log')
-    file_handler.setLevel(logging.WARNING)
-    file_handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'
-    ))
-    app.logger.addHandler(file_handler)
-else:
-    # Development settings here!
-    db = SqliteDatabase('toast.db', threadlocals=True)
-    app = Flask(__name__, static_folder='public', static_url_path='')
-
-    @app.route("/")
-    def root():
-        return app.send_static_file('index.html')
+app = config.get_app()
+db = config.get_database()
 
 #-------------------------------------------------------------------------------
 # Models
@@ -160,7 +129,7 @@ def get_flickrpicURLthn(term):
 
 @app.route("/dreams/add/<dream>")
 def add_dream(dream):
-    
+
     d = Dream.get_or_create(name=unquote(dream.lower()))
     d.count += 1
 
