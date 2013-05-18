@@ -133,6 +133,14 @@ var DreamListView = Backbone.View.extend
         }
     });
 
+    var RecentDreams = Backbone.Collection.extend({
+        model: Dream,
+        url: '/dreams/recent',
+        parse: function(response) {
+            return response;
+        }
+    });
+
     // Router
     var Router = Backbone.Router.extend({
         routes: {
@@ -182,15 +190,19 @@ var DreamListView = Backbone.View.extend
             var self = this;
 
             self.topDreams = new TopDreams();
+            self.recentDreams = new RecentDreams();
             self.topDreams.fetch();
+            self.recentDreams.fetch();
 
             // dependencies
             self.topDreams.on('sync', self.render);
+            self.recentDreams.on('sync', self.render);
         },
         render: function() {
             var self = this;
             var template = _.template($(self.template).html(),
-                                      {topDreams: self.topDreams.models});
+                                      {topDreams: self.topDreams.models,
+                                       recentDreams: self.recentDreams.models});
             this.$el.html( template );
             return this;
         }
