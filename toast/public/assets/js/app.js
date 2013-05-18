@@ -1,3 +1,4 @@
+$(function() {
 /////////
 // Models
 /////////
@@ -161,8 +162,51 @@ var DreamListView = Backbone.View.extend
 	}
 );
 
+    // Router
+    var Router = Backbone.Router.extend({
+        routes: {
+            '': 'index'
+        }
+    });
 
+    // Views
+    var IndexView = Backbone.View.extend({
+        el: '#hook',
+        events: {
+            'click button#btn-submit': 'addDream'
+        },
+        initialize: function() {
+            _.bindAll(this, 'render', 'addDream');
+            var self = this;
+        },
+        render: function(tmpl, data) {
+            var self = this;
+            var template = _.template($("#tmpl_index").html(),
+                                      {});
+            this.$el.html( template );
+            return this;
+        },
+        addDream: function() {
+            console.log('Add dream!');
+            var self = this;
+            var dream = $('#dream', self.el).val();
 
+            // This should really be a model call.
+            //$.getJSON('/dreams/add/' + dream, function(result) {
+            //    router.navigate(dream);
+            //});
+        }
+    });
 
+    // Instantiations
+    var indexView = new IndexView();
+    var router = new Router();
 
+    router.on('route:index', function() {
+        console.log('Load the index page!');
+        indexView.render();
+    });
 
+    // Let's get this party started!
+    Backbone.history.start();
+});
