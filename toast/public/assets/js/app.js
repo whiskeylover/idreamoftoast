@@ -185,14 +185,12 @@ var DreamListView = Backbone.View.extend
             self.topDreams.fetch();
 
             // dependencies
-            self.topDreams.on('sync', function() {
-                console.log('top: ', topDreams);
-            });
+            self.topDreams.on('sync', self.render);
         },
-        render: function(tmpl, data) {
+        render: function() {
             var self = this;
             var template = _.template($(self.template).html(),
-                                      {});
+                                      {topDreams: self.topDreams.models});
             this.$el.html( template );
             return this;
         }
