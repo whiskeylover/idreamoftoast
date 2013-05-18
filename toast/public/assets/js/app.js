@@ -165,7 +165,8 @@ var DreamListView = Backbone.View.extend
     // Router
     var Router = Backbone.Router.extend({
         routes: {
-            '': 'index'
+            '': 'index',
+            'dreams': 'dreams'
         }
     });
 
@@ -202,13 +203,35 @@ var DreamListView = Backbone.View.extend
         }
     });
 
+    DreamsView = Backbone.View.extend({
+        el: '#hook',
+        template: '#tmpl_dreams',
+        initialize: function() {
+            _.bindAll(this, 'render');
+            var self = this;
+        },
+        render: function(tmpl, data) {
+            var self = this;
+            var template = _.template($(self.template).html(),
+                                      {});
+            this.$el.html( template );
+            return this;
+        }
+    });
+
     // Instantiations
     var indexView = new IndexView();
+    var dreamsView = new DreamsView();
     var router = new Router();
 
     router.on('route:index', function() {
         console.log('Load the index page!');
         indexView.render();
+    });
+
+    router.on('route:dreams', function() {
+        console.log('Load the dreams page!');
+        dreamsView.render();
     });
 
     // Let's get this party started!
