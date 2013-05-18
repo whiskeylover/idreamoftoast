@@ -30,9 +30,9 @@
     <!-- Fav and touch icons -->
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="../assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
   </head>
 
   <body>
@@ -61,24 +61,11 @@
 
     </div>
 
-    <div class="container">
-    	<div class="span12 text-center">
-    		<img src="assets/img/main.png"/>
-    		<form>
-    			<em class="muted">All day long, I dream of toast.</em>
-    			<p>&nbsp;</p>
-    			<h3>What do you dream of?</h3>
+    <div id="hook" class="container">
+        <!-- All templates get magically loaded in here! -->
+    </div>
 
-       			<div class="input-append">
-  					<input class="span6" id="dream" name="dream" type="text" placeholder="Falafel">
-  					<button class="btn btn-primary" id="btn-submit" type="submit">Go!</button>
-				</div>
-    		</form>
-    	</div>
-    	<div class="span12 text-center" id="spinner">
-    		<img src="assets/img/18-0.gif" />
-    	</div>
-
+    <div class="footer">
     	<div class="navbar navbar-fixed-bottom">
     		<div class="navbar-inner">
     			<div class="container">
@@ -86,8 +73,7 @@
     			</div>
     		</div>
     	</div>
-
-    </div> <!-- /container -->
+    </div>
 
     <!-- Le javascript
     ================================================== -->
@@ -100,43 +86,24 @@
     <script src="assets/js/backbone.js"></script>
     <script src="assets/js/app.js"></script>
 
+    <!-- Templates -->
+    <script type="text/template" id="tmpl_index">
+    	<div class="span12 text-center">
+    		<img src="assets/img/main.png"/>
+            <br />
+            <em class="muted">All day long, I dream of toast.</em>
+            <p>&nbsp;</p>
+            <h3>What do you dream of?</h3>
 
-	<script>
-	$(document).ready(function()
-	{
-	  $("#btn-submit").click(function(evt)
-	  {
-	  	$("#spinner").show();
-	  	var dream = $("#dream").val();
-	  	//alert("Fetching /dreams/add/" + $("#dream").val());
-	    $.getJSON("/dreams/add/" + dream,function(result)
-	    {
-	      /*$.each(result, function(i, field)
-	      {
-	        $("div").append(field + " ");
-	      });*/
-	      // redirect to dreams.html#show/<dream>
-	      window.location = "dream.html#show/" + dream;
-	    });
-	    evt.preventDefault();
-	  });
-	  
-	  $('#spinner').hide();  // hide it initially
-	});
-	</script>
-    <!--
-    <script src="../assets/js/bootstrap-transition.js"></script>
-    <script src="../assets/js/bootstrap-alert.js"></script>
-    <script src="../assets/js/bootstrap-modal.js"></script>
-    <script src="../assets/js/bootstrap-dropdown.js"></script>
-    <script src="../assets/js/bootstrap-scrollspy.js"></script>
-    <script src="../assets/js/bootstrap-tab.js"></script>
-    <script src="../assets/js/bootstrap-tooltip.js"></script>
-    <script src="../assets/js/bootstrap-popover.js"></script>
-    <script src="../assets/js/bootstrap-button.js"></script>
-    <script src="../assets/js/bootstrap-collapse.js"></script>
-    <script src="../assets/js/bootstrap-carousel.js"></script>
-    <script src="../assets/js/bootstrap-typeahead.js"></script>
-	-->
+            <div class="input-append">
+                <input class="span6" id="dream" name="dream" type="text" placeholder="Falafel">
+                <button class="btn btn-primary" id="btn-submit" type="submit">Go!</button>
+            </div>
+    	</div>
+    	<div class="span12 text-center" id="spinner">
+    		<img src="assets/img/18-0.gif" />
+    	</div>
+    </script>
+
   </body>
 </html>
