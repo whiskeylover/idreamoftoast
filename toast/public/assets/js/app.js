@@ -184,6 +184,8 @@ var DreamListView = Backbone.View.extend
             var template = _.template($("#tmpl_index").html(),
                                       {});
             this.$el.html( template );
+            // Hide the spinner after the template renders.
+            $('#spinner', self.el).hide();
             return this;
         },
         addDream: function() {
@@ -191,10 +193,12 @@ var DreamListView = Backbone.View.extend
             var self = this;
             var dream = $('#dream', self.el).val();
 
+            $('#spinner', self.el).show();
+
             // This should really be a model call.
-            //$.getJSON('/dreams/add/' + dream, function(result) {
-            //    router.navigate(dream);
-            //});
+            $.getJSON('/dreams/add/' + dream, function(result) {
+                router.navigate('#');
+            });
         }
     });
 
