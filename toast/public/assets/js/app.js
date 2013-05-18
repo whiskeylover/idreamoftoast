@@ -1,52 +1,4 @@
 $(function() {
-/////////
-// Models
-/////////
-
-
-// Dream
-var Dream = Backbone.Model.extend
-(
-	{
-		defaults: { count: 1 },
-
-		//initialize: function()
-		//{
-		//	alert("Creating dream " + this.get('name'))
-		//}
-	}
-);
-
-
-// DreamList
-var DreamList = Backbone.Collection.extend
-(
-	{
-		model: Dream//,
-		//url: "/dreams/top",
-		//initialize: function()
-		//{
-			//alert("Collection url is " + this.url);
-			/*this.fetch
-			(
-				{
-					type: "GET",
-        			success: function ()
-        			{
-						alert("yes");
-           	       	},
-        	       	error: function()
-        	       	{
-        	       		alert("Oh Noes");
-        	       	}
-        	   	}
-        	);*/
-
-		//}
-	}
-);
-
-
 ////////
 // Views
 ////////
@@ -162,6 +114,17 @@ var DreamListView = Backbone.View.extend
 	}
 );
 
+    // Models & Collections
+    var Dream = Backbone.Model.extend();
+
+    var TopDreams = Backbone.Collection.extend({
+        model: Dream,
+        url: '/dreams/top',
+        parse: function(response) {
+            return response;
+        }
+    });
+
     // Router
     var Router = Backbone.Router.extend({
         routes: {
@@ -198,7 +161,7 @@ var DreamListView = Backbone.View.extend
 
             // This should really be a model call.
             $.getJSON('/dreams/add/' + dream, function(result) {
-                router.navigate('#');
+                router.navigate('dreams', {trigger: true});
             });
         }
     });
@@ -209,6 +172,14 @@ var DreamListView = Backbone.View.extend
         initialize: function() {
             _.bindAll(this, 'render');
             var self = this;
+
+            self.topDreams = new TopDreams();
+            self.topDreams.fetch();
+
+            // dependencies
+            self.topDreams.on('sync', function() {
+                console.log('top: ', topDreams);
+            });
         },
         render: function(tmpl, data) {
             var self = this;
