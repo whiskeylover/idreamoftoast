@@ -34,10 +34,11 @@ $(function() {
         el: '#hook',
         template: '#tmpl_index',
         events: {
-            'click button#btn-submit': 'addDream'
+            'click button#btn-submit': 'addDream',
+            'keypress input[type=text]': 'filterKeypress'
         },
         initialize: function() {
-            _.bindAll(this, 'render', 'addDream');
+            _.bindAll(this, 'render', 'addDream', 'filterKeypress');
             var self = this;
         },
         render: function(tmpl, data) {
@@ -48,6 +49,12 @@ $(function() {
             // Hide the spinner after the template renders.
             $('#spinner', self.el).hide();
             return this;
+        },
+        filterKeypress: function(e) {
+            var self = this;
+
+            // If 'enter' key pressed, process the input field.
+            if (e.keyCode == 13) self.addDream();
         },
         addDream: function() {
             console.log('Add dream!');
