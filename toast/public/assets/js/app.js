@@ -1,168 +1,161 @@
-/////////
-// Models
-/////////
+$(function() {
 
+    // Models & Collections
+    var Dream = Backbone.Model.extend();
 
-// Dream
-var Dream = Backbone.Model.extend
-(
-	{
-		defaults: { count: 1 },
+    var TopDreams = Backbone.Collection.extend({
+        model: Dream,
+        url: '/dreams/top',
+        parse: function(response) {
+            return response;
+        }
+    });
 
-		//initialize: function()
-		//{
-		//	alert("Creating dream " + this.get('name'))
-		//}
-	}
-);
+    var RecentDreams = Backbone.Collection.extend({
+        model: Dream,
+        url: '/dreams/recent',
+        parse: function(response) {
+            return response;
+        }
+    });
 
+    // Router
+    var Router = Backbone.Router.extend({
+        routes: {
+            '': 'index',
+            'dreams': 'dreams',
+            'dreams/:dream': 'getDream',
+            'about': 'about'
+        }
+    });
 
-// DreamList
-var DreamList = Backbone.Collection.extend
-(
-	{
-		model: Dream//,
-		//url: "/dreams/top",
-		//initialize: function()
-		//{
-			//alert("Collection url is " + this.url);
-			/*this.fetch
-			(
-				{
-					type: "GET",
-        			success: function ()
-        			{
-						alert("yes");
-           	       	},
-        	       	error: function()
-        	       	{
-        	       		alert("Oh Noes");
-        	       	}
-        	   	}
-        	);*/
+    // Views
+    var IndexView = Backbone.View.extend({
+        el: '#hook',
+        template: '#tmpl_index',
+        events: {
+            'click button#btn-submit': 'addDream',
+            'keypress input[type=text]': 'filterKeypress'
+        },
+        initialize: function() {
+            _.bindAll(this, 'render', 'addDream', 'filterKeypress');
+            var self = this;
+        },
+        render: function(tmpl, data) {
+            var self = this;
+            var template = _.template($(self.template).html(),
+                                      {});
+            this.$el.html( template );
+            // Hide the spinner after the template renders.
+            $('#spinner', self.el).hide();
+            return this;
+        },
+        filterKeypress: function(e) {
+            var self = this;
 
-		//}
-	}
-);
+            // If 'enter' key pressed, process the input field.
+            if (e.keyCode == 13) self.addDream();
+        },
+        addDream: function() {
+            console.log('Add dream!');
+            var self = this;
+            var dream = $('#dream', self.el).val();
 
+            $('#spinner', self.el).show();
 
-////////
-// Views
-////////
+            // This is NOT the ideal way to do this in Backbone. This
+            // should be updated in the future, but works for now!
+            $.getJSON('/dreams/add/' + dream, function(result) {
+                router.navigate('dreams/' + dream, {trigger: true});
+            });
+        }
+    });
 
-// Dream mini view
-var DreamMiniView = Backbone.View.extend
-(
-	{
-		tagName: "div",
-		className: "span3 center",
+    DreamsView = Backbone.View.extend({
+        el: '#hook',
+        template: '#tmpl_dreams',
+        initialize: function() {
+            _.bindAll(this, 'render', 'load', 'getDream');
+            var self = this;
 
-		template: $("#dreamTemplate").html(),
+            self.dream = new Dream();
+            self.topDreams = new TopDreams();
+            self.recentDreams = new RecentDreams();
 
-		render: function ()
-		{
-			var variables = {name: this.model.get('name'), count: this.model.get('count')};
-			var tmpl = _.template(this.template);
-			//this.$el.html(tmpl(this.model.toJSON())); // <-- fails here
-			//this.$el.html(tmpl(this.model.toJSON())); // <-- fails here
-			$(this.el).html(tmpl(this.model.toJSON())); // <-- this worked
-			return this;
-		}
-	}
-);
+            // dependencies
+            self.topDreams.on('sync', self.render);
+            self.recentDreams.on('sync', self.render);
+        },
+        render: function() {
+            var self = this;
+            var template = _.template($(self.template).html(),
+                                      {dream: self.dream,
+                                       topDreams: self.topDreams.models,
+                                       recentDreams: self.recentDreams.models});
+            this.$el.html( template );
+            return this;
+        },
+        load: function() {
+            var self = this;
+            // Go fetch some dreams!
+            self.topDreams.fetch();
+            self.recentDreams.fetch();
+        },
+        getDream: function(dream) {
+            var self = this;
+            // This is NOT the ideal way to do this in Backbone. This
+            // should be updated in the future, but works for now!
+            $.getJSON('/dreams/get/' + dream, function(result) {
+                self.dream = new Dream(result);
+                self.render();
+            });
+        }
+    });
 
+    AboutView = Backbone.View.extend({
+        el: '#hook',
+        template: '#tmpl_about',
+        initialize: function() {
+            _.bindAll(this, 'render');
+            var self = this;
+        },
+        render: function() {
+            var self = this;
+            var template = _.template($(self.template).html(),
+                                      {});
+            this.$el.html( template );
+            return this;
+        }
+    });
 
-var DreamView = Backbone.View.extend
-(
-	{
-		el: "#thedream",
-		template: $("#theDreamTemplate").html(),
-		model: Dream,
+    // Instantiations
+    var indexView = new IndexView();
+    var dreamsView = new DreamsView();
+    var aboutView = new AboutView();
+    var router = new Router();
 
-		initialize: function(options)
-		{
-			var url = '/dreams/get/' + options['name'];
-			this.model = new Dream([], {url: url});
-			this.listenTo( this.model, 'sync', this.render ); // Trigger render when model has been loaded
+    // Routes
+    router.on('route:index', function() {
+        console.log('Load the index page!');
+        indexView.render();
+    });
 
-			this.model.fetch
-			();
-		},
+    router.on('route:dreams', function() {
+        console.log('Load the dreams page!');
+        dreamsView.load();
+    });
 
-		render: function()
-		{
-			//alert('here');
-			var tmpl = _.template(this.template);
-			//alert(this.model.toJSON());
-			$(this.el).html(tmpl(this.model.toJSON()));
-		}
-	}
-);
+    router.on('route:getDream', function(dream) {
+        console.log('Get a dream!');
+        dreamsView.load();
+        dreamsView.getDream(dream);
+    });
 
+    router.on('route:about', function(dream) {
+        console.log('Load the about page!');
+        aboutView.render();
+    });
 
-// DreamList
-var DreamListView = Backbone.View.extend
-(
-	{
-		//el: $('#populardreams'), // attaches `this.el` to an existing element.
-
-		initialize: function(options)
-		{
-			var url = options["url"];
-			this.collection = new DreamList([], {url: url});
-			this.collection.fetch({type: "GET", reset: true});
-			_.bindAll(this, 'render'); // fixes loss of context for 'this' within methods
-			//this.render(); // not all views are self-rendering. This one is.
-
-			this.listenToOnce( this.collection, 'reset', this.render ); // Trigger render when list has been loaded
-		},
-
-		render: function()
-		{
-			var that = this;
-			var i = 0;
-			var div_row_fluid;
-			//alert(this.collection.toJSON());
-			_.each(
-				this.collection.models,
-				function (item)
-				{
-					if(i % 4 == 0)
-					{
-						div_row_fluid = $('<div class=\"row-fluid\"></div>');
-						$(this.el).append(div_row_fluid);
-						//$(this.el).append("<div class=\"row-fluid\">");
-					}
-					//$(that.el).append(item.render().el);
-					that.renderDream(div_row_fluid, item);
-					//if(i % 4 == 0)
-					//{
-					//	$(this.el).append("</div>");
-					//}
-					//$(that.el).append(item.render().el);
-					i++;
-
-				},
-				this
-			);
-		},
-
-		renderDream: function(div_row_fluid, item)
-		{
-			var dreamMiniView = new DreamMiniView
-			(
-				{
-					model: item
-				}
-			);
-			//$(this.el).append(dreamMiniView.render().el);
-			div_row_fluid.append(dreamMiniView.render().el);
-		}
-	}
-);
-
-
-
-
-
-
+    // Let's get this party started!
+    Backbone.history.start();
+});
