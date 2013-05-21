@@ -138,7 +138,8 @@ var DreamListView = Backbone.View.extend
     var Router = Backbone.Router.extend({
         routes: {
             '': 'index',
-            'dreams': 'dreams'
+            'dreams': 'dreams',
+            'dreams/:dream': 'getDream'
         }
     });
 
@@ -170,7 +171,7 @@ var DreamListView = Backbone.View.extend
 
             // This should really be a model call.
             $.getJSON('/dreams/add/' + dream, function(result) {
-                router.navigate('dreams', {trigger: true});
+                router.navigate('dreams/' + dream, {trigger: true});
             });
         }
     });
@@ -179,7 +180,7 @@ var DreamListView = Backbone.View.extend
         el: '#hook',
         template: '#tmpl_dreams',
         initialize: function() {
-            _.bindAll(this, 'render', 'load');
+            _.bindAll(this, 'render', 'load', 'getDream');
             var self = this;
 
             self.dream = new Dream();
@@ -204,6 +205,13 @@ var DreamListView = Backbone.View.extend
             // Go fetch some dreams!
             self.topDreams.fetch();
             self.recentDreams.fetch();
+        },
+        getDream: function(dream) {
+            var self = this;
+            $.getJSON('/dreams/get/' + dream, function(result) {
+                self.dream = new Dream(result);
+                self.render();
+            });
         }
     });
 
@@ -220,6 +228,12 @@ var DreamListView = Backbone.View.extend
     router.on('route:dreams', function() {
         console.log('Load the dreams page!');
         dreamsView.load();
+    });
+
+    router.on('route:getDream', function(dream) {
+        console.log('Get a dream!');
+        dreamsView.load();
+        dreamsView.getDream(dream);
     });
 
     // Let's get this party started!
