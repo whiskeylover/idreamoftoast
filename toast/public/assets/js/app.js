@@ -32,6 +32,7 @@ $(function() {
     // Views
     var IndexView = Backbone.View.extend({
         el: '#hook',
+        template: '#tmpl_index',
         events: {
             'click button#btn-submit': 'addDream'
         },
@@ -41,7 +42,7 @@ $(function() {
         },
         render: function(tmpl, data) {
             var self = this;
-            var template = _.template($("#tmpl_index").html(),
+            var template = _.template($(self.template).html(),
                                       {});
             this.$el.html( template );
             // Hide the spinner after the template renders.
@@ -123,6 +124,7 @@ $(function() {
     var aboutView = new AboutView();
     var router = new Router();
 
+    // Routes
     router.on('route:index', function() {
         console.log('Load the index page!');
         indexView.render();
