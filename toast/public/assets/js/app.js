@@ -56,7 +56,8 @@ $(function() {
 
             $('#spinner', self.el).show();
 
-            // This should really be a model call.
+            // This is NOT the ideal way to do this in Backbone. This
+            // should be updated in the future, but works for now!
             $.getJSON('/dreams/add/' + dream, function(result) {
                 router.navigate('dreams/' + dream, {trigger: true});
             });
@@ -95,6 +96,8 @@ $(function() {
         },
         getDream: function(dream) {
             var self = this;
+            // This is NOT the ideal way to do this in Backbone. This
+            // should be updated in the future, but works for now!
             $.getJSON('/dreams/get/' + dream, function(result) {
                 self.dream = new Dream(result);
                 self.render();
