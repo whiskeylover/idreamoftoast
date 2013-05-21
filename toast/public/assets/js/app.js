@@ -182,6 +182,7 @@ var DreamListView = Backbone.View.extend
             _.bindAll(this, 'render');
             var self = this;
 
+            self.dream = new Dream();
             self.topDreams = new TopDreams();
             self.recentDreams = new RecentDreams();
             self.topDreams.fetch();
@@ -194,7 +195,8 @@ var DreamListView = Backbone.View.extend
         render: function() {
             var self = this;
             var template = _.template($(self.template).html(),
-                                      {topDreams: self.topDreams.models,
+                                      {dream: self.dream,
+                                       topDreams: self.topDreams.models,
                                        recentDreams: self.recentDreams.models});
             this.$el.html( template );
             return this;
