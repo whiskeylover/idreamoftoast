@@ -24,7 +24,8 @@ $(function() {
         routes: {
             '': 'index',
             'dreams': 'dreams',
-            'dreams/:dream': 'getDream'
+            'dreams/:dream': 'getDream',
+            'about': 'about'
         }
     });
 
@@ -100,9 +101,26 @@ $(function() {
         }
     });
 
+    AboutView = Backbone.View.extend({
+        el: '#hook',
+        template: '#tmpl_about',
+        initialize: function() {
+            _.bindAll(this, 'render');
+            var self = this;
+        },
+        render: function() {
+            var self = this;
+            var template = _.template($(self.template).html(),
+                                      {});
+            this.$el.html( template );
+            return this;
+        }
+    });
+
     // Instantiations
     var indexView = new IndexView();
     var dreamsView = new DreamsView();
+    var aboutView = new AboutView();
     var router = new Router();
 
     router.on('route:index', function() {
@@ -119,6 +137,11 @@ $(function() {
         console.log('Get a dream!');
         dreamsView.load();
         dreamsView.getDream(dream);
+    });
+
+    router.on('route:about', function(dream) {
+        console.log('Load the about page!');
+        aboutView.render();
     });
 
     // Let's get this party started!
