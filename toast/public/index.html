@@ -106,6 +106,34 @@
     </script>
 
     <script type="text/template" id="tmpl_dreams">
+        <% if (dream.get('name')) { %>
+    	<div class="row-fluid">
+    		<div class="span3">&nbsp;</div>
+    		<div class="span6 center" id="thedream">
+				<h2>You dream of <span class="text-info"><%=dream.get('name')%></span>.</h2>
+	            <p><em>"<%=dream.get('definition')%>"</em></p>
+	            <p><em><small>- definition courtesy of Urban Dictionary</small></em></p>
+	  			<p><a type='button' class="btn btn-primary btn-small" href="http://www.urbandictionary.com/define.php?term=<%=dream.get('name')%>">See more</a></p>
+	  			<p>
+	    			<img data-src="holder.js/600x400" class="img-polaroid" alt="600x400" style="height: 400px;" src="<%=dream.get('picURL')%>">
+				</p>
+				<p><em><small>- image courtesy of <a href="http://www.flickr.com">Flickr</a></small></em></p>
+                <p><%=dream.get('count')%> other people dreamt about this.</p> <div class="btn-group">
+				  <a class="btn btn-info" href="#"><i class="icon-share icon-white"></i> Share</a>
+				  <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+				  <ul class="dropdown-menu">
+				    <li><a href="#">Facebook</a></li>
+				    <li><a href="#">Twitter</a></li>
+				  </ul>
+				</div>
+  			</div>
+  			<div class="span3">&nbsp;</div>
+		</div>
+
+		<hr />
+
+        <% } %>
+
     	<div class="row-fluid">
     		<div class="span3">&nbsp;</div>
     		<div class="span6 center" id="thedream">
