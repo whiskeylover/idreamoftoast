@@ -179,14 +179,12 @@ var DreamListView = Backbone.View.extend
         el: '#hook',
         template: '#tmpl_dreams',
         initialize: function() {
-            _.bindAll(this, 'render');
+            _.bindAll(this, 'render', 'load');
             var self = this;
 
             self.dream = new Dream();
             self.topDreams = new TopDreams();
             self.recentDreams = new RecentDreams();
-            self.topDreams.fetch();
-            self.recentDreams.fetch();
 
             // dependencies
             self.topDreams.on('sync', self.render);
@@ -200,6 +198,12 @@ var DreamListView = Backbone.View.extend
                                        recentDreams: self.recentDreams.models});
             this.$el.html( template );
             return this;
+        },
+        load: function() {
+            var self = this;
+            // Go fetch some dreams!
+            self.topDreams.fetch();
+            self.recentDreams.fetch();
         }
     });
 
@@ -215,7 +219,7 @@ var DreamListView = Backbone.View.extend
 
     router.on('route:dreams', function() {
         console.log('Load the dreams page!');
-        dreamsView.render();
+        dreamsView.load();
     });
 
     // Let's get this party started!
