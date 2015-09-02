@@ -93,7 +93,7 @@ def get_flickrpicURL(term):
 
         print "Refreshed " + term + "'s picURL"
 
-        return "http://farm{0}.staticflickr.com/{1}/{2}_{3}_z.jpg".format( \
+        return "https://farm{0}.staticflickr.com/{1}/{2}_{3}_z.jpg".format( \
             j['photos']['photo'][0]['farm'], \
             j['photos']['photo'][0]['server'], \
             j['photos']['photo'][0]['id'], \
