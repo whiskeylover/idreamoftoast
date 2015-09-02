@@ -81,7 +81,7 @@ def get_urbandictionary(term):
 @app.route("/dream/picURL/<term>")
 def get_flickrpicURL(term):
     api_key = 'b60ce2a4db0b09dc4e9e895efe6d660e'
-    URL = 'http://api.flickr.com/services/rest/?method=flickr.photos.search&' + \
+    URL = 'https://api.flickr.com/services/rest/?method=flickr.photos.search&' + \
         'api_key=' + api_key + \
         '&tags=' + term.replace(" ", "+") + \
         '&privacy_filter=1&format=json&nojsoncallback=1'
