@@ -1,7 +1,7 @@
 import datetime
 import json
-from urllib import unquote
-import urllib2
+from urllib.parse import unquote
+from urllib.request import urlopen
 
 from flask import jsonify, Response
 from peewee import CharField, DateTimeField, IntegerField, Model
@@ -67,12 +67,12 @@ def get_dream(dream):
 @app.route("/dream/define/<term>")
 def get_urbandictionary(term):
     try:
-        response = urllib2.urlopen('http://api.urbandictionary.com/v0/define?term=' + term.replace(" ", "+"))
+        response = urlopen('http://api.urbandictionary.com/v0/define?term=' + term.replace(" ", "+"))
         html = response.read()
 
         j = json.loads(html)
 
-        print "Refreshed " + term + "'s definition"
+        print("Refreshed " + term + "'s definition")
 
         return j['list'][0]['definition']
     except:
@@ -87,11 +87,11 @@ def get_flickrpicURL(term):
         '&privacy_filter=1&format=json&nojsoncallback=1'
 
     try:
-        response = urllib2.urlopen(URL)
+        response = urlopen(URL)
         html = response.read()
         j = json.loads(html)
 
-        print "Refreshed " + term + "'s picURL"
+        print("Refreshed " + term + "'s picURL")
 
         return "https://farm{0}.staticflickr.com/{1}/{2}_{3}_z.jpg".format( \
             j['photos']['photo'][0]['farm'], \
@@ -111,11 +111,11 @@ def get_flickrpicURLthn(term):
         '&privacy_filter=1&format=json&nojsoncallback=1'
 
     try:
-        response = urllib2.urlopen(URL)
+        response = urlopen(URL)
         html = response.read()
         j = json.loads(html)
 
-        print "Refreshed " + term + "'s picURLthn"
+        print("Refreshed " + term + "'s picURLthn")
 
         return "http://farm{0}.staticflickr.com/{1}/{2}_{3}_q.jpg".format( \
             j['photos']['photo'][0]['farm'], \
@@ -130,19 +130,20 @@ def get_flickrpicURLthn(term):
 @app.route("/dreams/add/<dream>")
 def add_dream(dream):
 
-    d = Dream.get_or_create(name=unquote(dream.lower()))
-    d.count += 1
+    d, created = Dream.get_or_create(name=unquote(dream.lower()))
+
+    d.count += 1;
 
     # if the record has just been created, fetch the picURL and definition
-    if d.count == 1:
-        print "Creating new dream"
+    if created:
+        print("Creating new dream")
         d.created_on = datetime.datetime.now()
         d.modified_on = datetime.datetime.now()
         d.picURL = get_flickrpicURL(d.name)
         d.picURLthn = get_flickrpicURLthn(d.name)
         d.definition = get_urbandictionary(d.name)
     else:
-        print "Fetching existing dream"
+        print("Fetching existing dream")
 
     # if the definition and URL are more than EXTERNAL_RESOURCE_REFRESH_FREQ days old
     days_old = 0

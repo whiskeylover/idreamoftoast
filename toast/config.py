@@ -48,11 +48,11 @@ def get_database():
         # Production settings here!
         if not (HOST or USER or PASSWD):
             import sys
-            print 'Environment variables NOT set!'
+            print('Environment variables NOT set!')
             sys.exit()
         db = MySQLDatabase(DB, host=HOST, user=USER, passwd=PASSWD)
     else:
         # Development settings here!
-        db = SqliteDatabase('toast.db', threadlocals=True)
+        db = SqliteDatabase('toast.db')#, threadlocals=True)
 
     return db
